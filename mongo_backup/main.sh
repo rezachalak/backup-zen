@@ -2,6 +2,7 @@
 set -e
 BACKUP_TIME=$(date +%Y%m%d%H%M)
 AWS_COMMAND=$(which aws)
+
 ###########################
 ####### LOAD CONFIG #######
 ###########################
@@ -10,10 +11,10 @@ while [ $# -gt 0 ]; do
         case $1 in
                 -c)
                         CONFIG_FILE_PATH="$2"
-                        shift 2
+                        shift 2 
                         ;;
                 *)
-                        ${ECHO} "Unknown Option \"$1\"" 1>&2
+                        echo "Unknown Option \"$1\"" 1>&2
                         exit 2
                         ;;
         esac
@@ -37,8 +38,8 @@ source "${CONFIG_FILE_PATH}"
 ###########################
 
 if $CREDENTIALS_IN_K8S; then
-        export KUBECONFIG=$DEVOPS_CREDENTIALS_KUBECONFIG
-        export MONGODB_ROOT_PASSWORD=$(kubectl get secret mongodb-credentials --namespace $CREDENTIAL_NAMESPACE -o jsonpath="{.data.root}" | base64 --decode)
+        export KUBECONFIG=$CREDENTIALS_KUBECONFIG
+        export MONGODB_ROOT_PASSWORD=$(kubectl get secret $DB_CRED_SECRET --namespace $CREDENTIAL_NAMESPACE -o jsonpath="{.data.password}" | base64 --decode)
 fi
 
 # Log files
