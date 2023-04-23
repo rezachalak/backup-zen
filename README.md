@@ -1,6 +1,14 @@
 # Automated Database Backup
 
-This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
+This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases based on best practices. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
+
+## Main features
+
+- Full backup from MySQL, PostgreSQL, MongoDB
+- Skipping specified databases
+- Specifying the weekly backup day from (Monday-Sunday) and number of days/weeks to keep weekly backups
+- Syncing dumped files with AWS S3 bucket
+- Reading secret variables from kubernetes secrets
 
 ## Getting Started
 
@@ -11,6 +19,9 @@ Before using these scripts, you will need to have the following installed on you
 - MySQL client (for MySQL backups)
 - MongoDB client (for MongoDB backups)
 - PostgreSQL client (for PostgreSQL backups)
+- AWS client with configured profiles
+- AWS bucket as cloud storage
+- Kubectl with associated kubeconfigs
 - GNU tar
 - Cron
 
