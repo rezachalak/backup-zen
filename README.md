@@ -1,4 +1,4 @@
-# Database Backup Scripts
+# Automated Database Backup
 
 This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
 
