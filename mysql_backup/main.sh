@@ -54,7 +54,7 @@ ps 2>&1 | tee -a $LOG
 ###### START PROCESS ######
 ###########################
 
-# Port forward to mongodb statefulset on k8s cluster
+# Port forward to mysql statefulset on k8s cluster
 if $K8S_MYSQL; then
         export KUBECONFIG=$MYSQL_KUBECONFIG
         kubectl port-forward statefulset/$MYSQL_STATEFULSET_NAME -n $MYSQL_NAMESPACE $PORT:$MYSQL_STATEFULSET_PORT &
