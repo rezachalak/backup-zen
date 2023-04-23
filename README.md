@@ -51,5 +51,7 @@ April 23th: MongoDB some typo fixed and some improvements has made in variable n
 
 April 23th:[MySQL backup](https://github.com/mrezachalak/db-backup/tree/main/mysql_backup) initial release
 
+April 23th:[PostgreSQL backup](https://github.com/mrezachalak/db-backup/tree/main/pg_backup) initial release
+
 ### Licence
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/mrezachalak/db-backup/blob/main/LICENSE) file for details.
