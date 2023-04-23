@@ -27,12 +27,15 @@ https://github.com/mrezachalak/db-backup
 3. Set the execution permission for the backup scripts:
 
 ```bash
-chmod +x mysql-backup.sh mongodb-backup.sh postgresql-backup.sh
+find . -name "*.sh" -exec chmod +x {} \;
 ```
 
 4. Schedule the backups using Cron. For example, to backup MySQL databases, add the following line to your crontab:
 ```bash
-0 2 * * * /path/to/db-backup/mysql_backup/main.sh daily
+0 2 * * * /path/to/db-backup/mysql_backup/main.sh
+0 3 * * * /path/to/db-backup/mongo_backup/main.sh
+0 4 * * * /path/to/db-backup/pg_backup/main.sh
+
 ```
 
 ### Change Log
