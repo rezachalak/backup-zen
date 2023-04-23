@@ -38,6 +38,11 @@ find . -name "*.sh" -exec chmod +x {} \;
 
 ```
 
+### Note
+
+PostgreSQL backup scripts has been adapted with PostgresWiki
+https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux
+
 ### Change Log
 
 March 7th: [MongoDB backup](https://github.com/mrezachalak/db-backup/tree/main/mongo_backup) initial release
