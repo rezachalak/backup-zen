@@ -17,16 +17,23 @@ Before using these scripts, you will need to have the following installed on you
 ### Installation
 
 1. Clone this repository to your local machine:
-```bash https://github.com/mrezachalak/db-backup```
+
+```bash
+https://github.com/mrezachalak/db-backup
+```
 
 2. Configure the backup settings in the `config` files (e.g. [mysql_backup.config](https://github.com/mrezachalak/db-backup/blob/main/mysql_backup/mysql_backup.config))
 
 3. Set the execution permission for the backup scripts:
-```bash chmod +x mysql-backup.sh mongodb-backup.sh postgresql-backup.sh```
+
+```bash
+chmod +x mysql-backup.sh mongodb-backup.sh postgresql-backup.sh
+```
 
 4. Schedule the backups using Cron. For example, to backup MySQL databases, add the following line to your crontab:
-```bash 0 2 * * * /path/to/db-backup/mysql_backup/main.sh daily```
-
+```bash
+0 2 * * * /path/to/db-backup/mysql_backup/main.sh daily
+```
 
 ### Change Log
 
