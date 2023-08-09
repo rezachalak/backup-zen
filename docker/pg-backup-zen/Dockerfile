@@ -16,8 +16,8 @@ ENV FAILED_TEAMS_URL=""
 WORKDIR /app
 COPY scripts/pgdump.py .
 COPY resources/creds.json .
-COPY --chmod=0500 pypg_backup_rotated.sh .
-COPY --chmod=0500 pg_backup_rotated.sh .
+COPY --chmod=0500 scripts/pypg_backup_rotated.sh .
+COPY --chmod=0500 scripts/pg_backup_rotated.sh .
 
 ENTRYPOINT []
 
