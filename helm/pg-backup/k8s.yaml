@@ -10,6 +10,24 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: pg-backup-zen-1.0.0
 ---
+# Source: pg-backup-zen/templates/objectStorage-secret.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-backup-zen-s3-credentials
+  labels: 
+    app.kubernetes.io/name: pg-backup
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: pg-backup-zen-1.0.0
+  namespace: db-backups
+data:
+  AWS_ACCESS_KEY_ID: YWNjZXNz
+  AWS_DEFAULT_REGION: dXMtd2VzdC0x
+  AWS_SECRET_ACCESS_KEY: a2V5
+  BUCKET_NAME: cGctYmFja3VwLXplbg==
+type: Opaque
+---
 # Source: pg-backup-zen/templates/pg-backup-config-configmap.yml
 apiVersion: v1
 kind: ConfigMap
@@ -22,7 +40,7 @@ metadata:
     helm.sh/chart: pg-backup-zen-1.0.0
   namespace: db-backups
 data:
-  DB_HOST: "db-address.rds.amazonaws.com"
+  DB_HOST: "mydb.rds.amazonaws.com"
   DB_PORT: "54325"
   TEAMS_NOTIFICATION: "true"
   DAYS_TO_KEEP: "5"
@@ -48,7 +66,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Gi
+      storage: 20Gi
   storageClassName: standard
   volumeMode: Filesystem
 ---
@@ -75,7 +93,13 @@ spec:
               image: avidcloud/pg-backup-zen:latest
               imagePullPolicy: IfNotPresent
               name: dumper
-              resources: map[limits:map[cpu:4 memory:4Gi] requests:map[cpu:1 memory:1Gi]]
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 1Gi
+                limits:
+                  cpu: "4"
+                  memory: 4Gi
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:

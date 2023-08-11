@@ -29,7 +29,17 @@ spec:
               image: {{ include "pg-backup.cronjob.image" . }}
               imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
               name: dumper
-              resources: {{ .Values.cronjob.resources }}
+              resources: 
+              {{- with .Values.cronjob.resources.requests }}
+                requests:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
+              {{- with .Values.cronjob.resources.limits }}
+                limits:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
               volumeMounts:

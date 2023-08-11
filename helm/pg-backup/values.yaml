@@ -21,7 +21,7 @@ global:
   failedTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
 
 cronjob:
-  # image: avidcloud/pg-backup-zen:12.1
+  # image: mrezachalak/pg-backup-zen:12.1
   pullSecrets: 
   pullPolicy: IfNotPresent
   restartPolicy: Never
@@ -97,10 +97,10 @@ backupUpload:
   # S3SecretName is the name of the secret where the s3 secret data is stored (can be used instead of AWS_S3)
   # S3SecretName: s3-secret-name
   AWS_S3:
-    AWS_ACCESS_KEY_ID:
-    AWS_DEFAULT_REGION:
-    AWS_SECRET_ACCESS_KEY:
-    BUCKET_NAME:
+    AWS_ACCESS_KEY_ID: "access"
+    AWS_DEFAULT_REGION: "us-west-1"
+    AWS_SECRET_ACCESS_KEY: "key"
+    BUCKET_NAME: "pg-backup-zen"
   # MinIOSecretName is the name of the secret where the minio secret data is stored (can be used instead of MINIO)
   # MinIOSecretName: minio-secret-name
   MINIO:
