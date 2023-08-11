@@ -1,0 +1,101 @@
+{{- if eq .Values.backupType "oneByOne" }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "pg-backup.name" .}}-one-by-one
+  namespace: {{ include "pg-backup.namespace" . }}
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if .Values.backupUpload.active }}
+          initContainers:
+          {{- else }}
+          containers:
+          {{- end }}
+            - args:
+            {{- if eq .Values.backupType "oneByOne" }}
+              - /app/pypg_backup_rotated.sh
+            {{- else }}
+              - /app/pg_backup_rotated.sh
+            {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "pg-backup.name" . }}-db-data
+              env:
+                - name: BACKUP_DIR
+                  value: /backups
+              image: {{ include "pg-backup.cronjob.image" . }}
+              imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
+              name: dumper
+              resources: {{ .Values.cronjob.resources }}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+                - mountPath: /app/creds.json
+                  subPath: creds.json
+                  name: credentials
+                  readOnly: true
+          {{- if .Values.backupUpload.active }}
+          containers:
+            - command:
+              - "bash"
+              - "-c"
+              args:  
+                - >
+                  {{ include "pg-backup.cronjob.uploader.arg" . }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "pg-backup.name" . }}-pg-backup-config
+                - secretRef:
+                    name: {{ include "pg-backup.objectStorageName" . }}
+              env:
+                - name: KUBERNETES_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              {{- if eq .Values.backupUpload.ObjectStorageType "AWS_S3" }}
+              image: amazon/aws-cli:2.13.6
+              {{- else if .Values.backupUpload.ObjectStorageType "MinIO" }}
+              image: minio/mc
+              {{- end }}
+              imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
+              name: uploader
+              resources: 
+              {{- with .Values.cronjob.resources.requests }}
+                requests:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
+              {{- with .Values.cronjob.resources.limits }}
+                limits:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+          {{- end }}
+          restartPolicy: {{ .Values.cronjob.restartPolicy }}
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: 	{{ .Values.cronjob.storage.PVCName }}
+            - name: credentials
+              secret:
+                defaultMode: 0400
+                items:
+                  - key: creds.json
+                    path: creds.json
+                secretName: {{ include "pg-backup.name" . }}-db-data
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  schedule: {{ .Values.cronjob.schedule }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+{{ end -}}
