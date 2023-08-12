@@ -1,0 +1,17 @@
+{{- if .Values.cronjob.storage.createPVC }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "pg-backup.PVCName" . }}
+  namespace: {{ include "pg-backup.namespace" .}}
+  labels: {{ include "pg-backup.labels" . | nindent 4 }}
+
+spec:
+  accessModes:
+    - {{ .Values.cronjob.storage.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.cronjob.storage.PVCSize }}
+  storageClassName: {{ .Values.cronjob.storage.storageClass }}
+  volumeMode: Filesystem
+{{ end -}}
