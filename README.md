@@ -1,8 +1,9 @@
-# Automated Database Backup
+# Backup Zen
+## Automated Database Backup
 
 This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases based on best practices. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
 
-## Main features
+### Main features
 
 - Full backup from MySQL, PostgreSQL, MongoDB
 - Skipping specified databases
@@ -10,9 +11,9 @@ This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL datab
 - Syncing dumped files with AWS S3 bucket
 - Reading secret variables from kubernetes secrets
 
-## Getting Started
+### Getting Started
 
-### Prerequisites
+#### Prerequisites
 
 Before using these scripts, you will need to have the following installed on your system:
 
@@ -25,7 +26,7 @@ Before using these scripts, you will need to have the following installed on you
 - GNU tar
 - Cron
 
-### Installation
+#### Installation
 
 1. Clone this repository to your local machine:
 
@@ -56,13 +57,17 @@ https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux
 
 ### Change Log
 
-March 7th: [MongoDB backup](https://github.com/mrezachalak/db-backup/tree/main/mongo_backup) initial release
+March 7th, 2023: [MongoDB backup](https://github.com/mrezachalak/db-backup/tree/main/mongo_backup) initial release
 
-April 23th: MongoDB some typo fixed and some improvements has made in variable naming
+April 23th, 2023: MongoDB some typo fixed and some improvements has made in variable naming
 
-April 23th:[MySQL backup](https://github.com/mrezachalak/db-backup/tree/main/mysql_backup) initial release
+April 23th, 2023:[MySQL backup](https://github.com/mrezachalak/db-backup/tree/main/mysql_backup) initial release
 
-April 23th:[PostgreSQL backup](https://github.com/mrezachalak/db-backup/tree/main/pg_backup) initial release
+April 23th, 2023:[PostgreSQL backup](https://github.com/mrezachalak/db-backup/tree/main/pg_backup) initial release
+
+August 10th, 2023: Dockerfile of postgres backup-zen client added
+
+August 12th, 2023: Helm chart of postgres backup-zen added
 
 ### Licence
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/mrezachalak/db-backup/blob/main/LICENSE) file for details.
