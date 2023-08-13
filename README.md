@@ -1,20 +1,27 @@
 # Backup Zen
-## Automated Database Backup
+## Automated Database Backup Using Helm
 
 This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases based on best practices. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
 
+
 ### Main features
 
-- Full backup from MySQL, PostgreSQL, MongoDB
-- Skipping specified databases
-- Specifying the weekly backup day from (Monday-Sunday) and number of days/weeks to keep weekly backups
-- Syncing dumped files with AWS S3 bucket
-- Reading secret variables from kubernetes secrets
+- Helm: Quick, Reliable Deployment with Notifications on Success/Failure
+- Full or individual backups from MySQL, PostgreSQL, and MongoDB.
+- Skip specified databases in Full backup mode
+- Specify the weekly backup day from (Monday-Sunday) and number of days/weeks to keep backups
+- Sync dumped files with AWS S3/MinIO/Ceph object storage
+- Read secret variables from kubernetes secrets or direct put them in values.yaml
 
 ### Getting Started
 
 #### Prerequisites
 
+##### Using Helm
+- Helm and kubectl installed and configured
+  
+
+##### Using crontab
 Before using these scripts, you will need to have the following installed on your system:
 
 - MySQL client (for MySQL backups)
