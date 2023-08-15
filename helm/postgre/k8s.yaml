@@ -1,0 +1,53 @@
+---
+# Source: pg-backup-zen/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata: 
+  name: db-backups
+  labels: 
+    app.kubernetes.io/name: backup-zen
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: pg-backup-zen-1.0.0
+---
+# Source: pg-backup-zen/templates/backup-config-configmap.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-backup-zen-backup-config
+  labels: 
+    app.kubernetes.io/name: backup-zen
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: pg-backup-zen-1.0.0
+  namespace: db-backups
+data:
+  DB_HOST: "mydb.rds.amazonaws.com"
+  DB_PORT: "54325"
+  TEAMS_NOTIFICATION: "true"
+  DAYS_TO_KEEP: "5"
+  DAY_OF_WEEK_TO_KEEP: "5"
+  WEEKS_TO_KEEP: "7"
+  FAILED_TEAMS_URL: "https://myorg.webhook.office.com/webhookb2/blob-blob-blob"
+  SUCCEEDED_TEAMS_URL: "https://myorg.webhook.office.com/webhookb2/blob-blob-blob"
+---
+# Source: pg-backup-zen/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mydb-backup
+  namespace: db-backups
+  labels: 
+    app.kubernetes.io/name: backup-zen
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: pg-backup-zen-1.0.0
+
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: standard
+  volumeMode: Filesystem

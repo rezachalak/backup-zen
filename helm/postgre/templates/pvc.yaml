@@ -1,0 +1,17 @@
+{{- if .Values.cronjob.storage.createPVC }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "backup-zen.PVCName" . }}
+  namespace: {{ include "backup-zen.namespace" .}}
+  labels: {{ include "backup-zen.labels" . | nindent 4 }}
+
+spec:
+  accessModes:
+    - {{ .Values.cronjob.storage.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.cronjob.storage.PVCSize }}
+  storageClassName: {{ .Values.cronjob.storage.storageClass }}
+  volumeMode: Filesystem
+{{ end -}}
