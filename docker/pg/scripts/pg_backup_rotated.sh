@@ -1,57 +1,24 @@
 #!/bin/bash
 
-###########################
-####### LOAD CONFIG #######
-###########################
-
-while [ $# -gt 0 ]; do
-        case $1 in
-                -c)
-                        CONFIG_FILE_PATH="$2"
-                        shift 2
-                        ;;
-                *)
-                        ${ECHO} "Unknown Option \"$1\"" 1>&2
-                        exit 2
-                        ;;
-        esac
-done
-
-if [ -z $CONFIG_FILE_PATH ] ; then
-        SCRIPTPATH=$(cd ${0%/*} && pwd -P)
-        CONFIG_FILE_PATH="${SCRIPTPATH}/pg_backup.config"
-fi
-
-if [ ! -r ${CONFIG_FILE_PATH} ] ; then
-        echo "Could not load config file from ${CONFIG_FILE_PATH}" 1>&2
-        exit 1
-fi
-
-source "${CONFIG_FILE_PATH}"
-
-###########################
-#### PRE-BACKUP CHECKS ####
-###########################
-
-# Make sure we're running as the required backup user
-if [ "$BACKUP_USER" != "" -a "$(id -un)" != "$BACKUP_USER" ] ; then
-	echo "This script must be run as $BACKUP_USER. Exiting." 1>&2
-	exit 1
-fi
-
-
+logFile=./logAndError
+FAILED=false
 ###########################
 ### INITIALISE DEFAULTS ###
 ###########################
 
-if [ ! $HOSTNAME ]; then
-	HOSTNAME="localhost"
+if [ ! $DB_HOST ]; then
+	DB_HOST="localhost"
+fi;
+
+if [ ! $DB_PORT ]; then
+	DB_PORT=5432
 fi;
 
 if [ ! $USERNAME ]; then
 	USERNAME="postgres"
 fi;
 
+PGPASSWORD=$PASSWORD
 
 ###########################
 #### START THE BACKUPS ####
@@ -60,12 +27,12 @@ fi;
 function perform_backups()
 {
 	SUFFIX=$1
-	FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`$SUFFIX/"
+	FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d_\%H`$SUFFIX/"
 
-	echo "Making backup directory in $FINAL_BACKUP_DIR"
+	echo "Backup directory: $FINAL_BACKUP_DIR" | tee -a $logFile
 
 	if ! mkdir -p $FINAL_BACKUP_DIR; then
-		echo "Cannot create backup directory in $FINAL_BACKUP_DIR. Go and fix it!" 1>&2
+		echo "Cannot create backup directory in $FINAL_BACKUP_DIR. Go and fix it!" | tee -a $logFile 1>&2
 		exit 1;
 	fi;
 
@@ -78,11 +45,12 @@ function perform_backups()
 
 	if [ $ENABLE_GLOBALS_BACKUPS = "yes" ]
 	then
-		    echo "Globals backup"
+		    echo "Globals backup" | tee -a $logFile
 
 		    set -o pipefail
-		    if ! pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" | gzip > $FINAL_BACKUP_DIR"globals".sql.gz.in_progress; then
-		            echo "[!!ERROR!!] Failed to produce globals backup" 1>&2
+		    if ! pg_dumpall -g -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" | gzip > $FINAL_BACKUP_DIR"globals".sql.gz.in_progress; then
+		            echo "[ERROR] Failed to produce globals backup" | tee -a $logFile 1>&2
+					FAILED=true
 		    else
 		            mv $FINAL_BACKUP_DIR"globals".sql.gz.in_progress $FINAL_BACKUP_DIR"globals".sql.gz
 		    fi
@@ -106,16 +74,17 @@ function perform_backups()
 	echo -e "\n\nPerforming schema-only backups"
 	echo -e "--------------------------------------------\n"
 
-	SCHEMA_ONLY_DB_LIST=`psql -h "$HOSTNAME" -U "$USERNAME" -At -c "$SCHEMA_ONLY_QUERY" postgres`
+	SCHEMA_ONLY_DB_LIST=`psql -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" -At -c "$SCHEMA_ONLY_QUERY" postgres`
 
 	echo -e "The following databases were matched for schema-only backup:\n${SCHEMA_ONLY_DB_LIST}\n"
 
 	for DATABASE in $SCHEMA_ONLY_DB_LIST
 	do
-	        echo "Schema-only backup of $DATABASE"
+	        echo "Schema-only backup of $DATABASE" | tee -a $logFile
 		set -o pipefail
-	        if ! pg_dump -Fp -s -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz.in_progress; then
-	                echo "[!!ERROR!!] Failed to backup database schema of $DATABASE" 1>&2
+	        if ! pg_dump -Fp -s -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz.in_progress; then
+	                echo "[ERROR] Failed to backup database schema of $DATABASE" | tee -a $logFile 1>&2
+					FAILED=true
 	        else
 	                mv $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz
 	        fi
@@ -134,19 +103,22 @@ function perform_backups()
 
 	FULL_BACKUP_QUERY="select datname from pg_database where not datistemplate and datallowconn $EXCLUDE_SCHEMA_ONLY_CLAUSE order by datname;"
 
-	echo -e "\n\nPerforming full backups"
+	echo -e "\n\nPerforming full backups" | tee -a $logFile
 	echo -e "--------------------------------------------\n"
 
-	for DATABASE in `psql -h "$HOSTNAME" -U "$USERNAME" -At -c "$FULL_BACKUP_QUERY" postgres`
+	for DATABASE in `psql -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" -At -c "$FULL_BACKUP_QUERY" postgres`
 	do
 		if [ $ENABLE_PLAIN_BACKUPS = "yes" ]
 		then
-			echo "Plain backup of $DATABASE"
-
+			echo "\nPlain backup of $DATABASE" | tee -a $logFile
 			set -o pipefail
-			if ! pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
-				echo "[!!ERROR!!] Failed to produce plain backup database $DATABASE" 1>&2
+			
+			if ! pg_dump -Fp -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+				echo "\n[ERROR] Failed to produce plain backup database $DATABASE" | tee -a $logFile 1&2
+				FAILED=true
+
 			else
+				echo "\n\nPlain backup of $DATABASE done" | tee -a $logFile
 				mv $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE".sql.gz
 			fi
 			set +o pipefail
@@ -155,18 +127,30 @@ function perform_backups()
 
 		if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]
 		then
-			echo "Custom backup of $DATABASE"
+			echo "\nCustom backup of $DATABASE" | tee -a $logFile
 
-			if ! pg_dump -Fc -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
-				echo "[!!ERROR!!] Failed to produce custom backup database $DATABASE"
+			if ! pg_dump -Fc -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
+				echo "\n[ERROR] Failed to produce custom backup database $DATABASE" | tee -a $logFile 1>&2
+				FAILED=true
 			else
 				mv $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress $FINAL_BACKUP_DIR"$DATABASE".custom
 			fi
 		fi
 
 	done
+	if $FAILED
+	then
+		echo -e "\n\nAll Database backups completed, but one or more backups failed!" | tee -a $logFile
+		output_json=$(printf '{"title": "Backups failed!","text":  "%s  <pre>Pod name: %s\nDatabase Host address: %s</pre>"}' "$(cat /app/logAndError)" $KUBERNETES_POD_NAME $DB_HOST)
+		curl -H 'Content-Type: application/json' -d "${output_json}" $FAILED_TEAMS_URL
+		exit 1;
+	else
+		echo -e "\n\nAll database backups completed!" | tee -a $logFile
+		output_json=$(printf '{"title": "Backups successfully done!","text":  "%s  <pre>Pod name: %s\nDatabase Host address: %s</pre>"}' "$(cat /app/logAndError)" $KUBERNETES_POD_NAME $DB_HOST)
+		curl -H 'Content-Type: application/json' -d "${output_json}" $SUCCEEDED_TEAMS_URL
+		exit 0;
+	fi
 
-	echo -e "\nAll database backups complete!"
 }
 
 # MONTHLY BACKUPS
@@ -179,8 +163,6 @@ then
 	find $BACKUP_DIR -maxdepth 1 -name "*-monthly" -exec rm -rf '{}' ';'
 
 	perform_backups "-monthly"
-
-	exit 0;
 fi
 
 # WEEKLY BACKUPS
@@ -194,8 +176,6 @@ then
 	find $BACKUP_DIR -maxdepth 1 -mtime +$EXPIRED_DAYS -name "*-weekly" -exec rm -rf '{}' ';'
 
 	perform_backups "-weekly"
-
-	exit 0;
 fi
 
 # DAILY BACKUPS

@@ -1,0 +1,12 @@
+[
+    {
+        "database_name": "db1",
+        "username": "user1",
+        "password": "pa$$w0rd"
+    },
+    {
+        "database_name": "db2",
+        "username": "user2",
+        "password": "pa$$w0rd"
+    }
+]
