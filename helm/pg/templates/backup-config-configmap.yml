@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "backup-zen.backupConfigName" . }}
+  labels: {{ include "backup-zen.labels" . | nindent 4 }}
+  namespace: {{ include "backup-zen.namespace" . }}
+data:
+  DB_HOST: {{ default "localhost" .Values.hostname | quote }}
+  DB_PORT: {{ default "12345" .Values.port | quote }}
+  TEAMS_NOTIFICATION: {{ default "false" .Values.global.teamsNotification | quote }}
+{{- if .Values.global.rotation }}
+  DAYS_TO_KEEP: {{ default "9999" .Values.global.rotation_config.dayOfWeekToKeep | quote }}
+  DAY_OF_WEEK_TO_KEEP: {{ default "5" .Values.global.rotation_config.dayOfWeekToKeep | quote }}
+  WEEKS_TO_KEEP: {{ default "9999" .Values.global.rotation_config.daysToKeep | quote }}
+{{- end -}}
+{{- if .Values.global.teamsNotification }}
+  FAILED_TEAMS_URL: {{ default "" .Values.global.failedTeamsURL | quote }}
+  SUCCEEDED_TEAMS_URL: {{  default "" .Values.global.succeededTeamsURL | quote }}
+{{ end -}}

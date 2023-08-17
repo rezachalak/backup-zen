@@ -1,0 +1,99 @@
+databaseType: MongoDB # Can be one of PostgreSQL, MySQL or MongoDB 
+hostname: mydb.rds.amazonaws.com
+port: 54325
+# Select one of these two types:
+# oneByOne: preparing databaseName, username and password for each database as an array in oneByOne.creds must be provided
+# OR
+# adminUser: admin user credentials in adminUser.username and adminUser.password must be provided
+# default is adminUser
+credentialType: oneByOne
+# credsSecretName is the name of the secret where the database credentials are stored (can be used instead of setting oneByOne.creds)
+# It must contain 
+#   username and password >>> if credentialType == adminUser
+#   creds.json >>> if credentialType == oneByOne 
+# credsSecretName: mycreds-secret
+
+global:
+  charset: 
+  namespace: db-backups
+  createNamespace: true
+  rotation: true
+  #### SETTINGS FOR ROTATED BACKUPS ####
+  rotation_config:
+  # Which day to take the weekly backup from (1-7 = Monday-Sunday)
+    dayOfWeekToKeep: 5
+  # Number of days to keep daily backups
+    daysToKeep: 7
+  # How many weeks to keep weekly backups
+    weeksToKeep: 5
+  teamsNotification: true
+  succeededTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
+  failedTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
+
+cronjob:
+  image: mrezachalak/pg-backup-zen:12.1
+  pullPolicy: Always
+  imagePullSecrets: []
+  restartPolicy: Never
+  resources:
+     requests:
+       cpu: 1
+       memory: "1Gi"
+     limits:
+       cpu: 2
+       memory: "2Gi"
+  schedule: "0 0 * * *"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 3
+  storage:
+    createPVC: true
+    PVCName: mydb-backup
+    storageClass: standard
+    accessMode: ReadWriteOnce
+    PVCSize: 20Gi
+
+adminUser:
+# Optional username to connect to database as.  Will default to "root" if none specified.
+  username: root
+  password: roOtP@$$
+# Provide adminUser.username and adminUser.password in or create a secret in the specified namespace containing username and password in it 
+  # backupCredsSecretName: mydb-backup-creds
+
+oneByOne:
+# credsSecretName is the name of the secret where the database credentials are stored (can be used instead of oneByOne.creds)
+# credsSecretName: mycreds-secret
+# This secret must contain: creds.json
+  # creds.json: 
+    # [
+    # {
+      # "database_name": "",
+      # "username": "",
+      # "password": ""
+    # },..
+    # ]
+  creds:
+    - database_name: db1
+      username: user1
+      password: password1
+    - database_name: db2
+      username: user2
+      password: password2
+
+##### SETTINGS FOR AWS S3 ####
+backupUpload:
+  active: true
+# Supported objectStorages are: MinIO and AWS_S3
+  objectStorageType: MinIO
+  # objectStorageSecretName is the name of the secret where the credentials of object storage is stored.
+  # objectStorageSecretName: s3-secret-name
+  AWS_S3:
+    AWS_ACCESS_KEY_ID: "access"
+    AWS_DEFAULT_REGION: "us-west-1"
+    AWS_SECRET_ACCESS_KEY: "secret"
+    BUCKET_NAME: "mybucket-backup-zen"
+  MINIO:
+    MINIO_ACCESS_KEY_ID: access-key
+    MINIO_URL: https://localhost
+    MINIO_SECRET_ACCESS_KEY: secret
+    BUCKET_NAME: backupzen-minio
+    OBJECT_NAME: c342jhc34gf

@@ -1,0 +1,102 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "backup-zen.name" .}}
+  namespace: {{ include "backup-zen.namespace" . }}
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if .Values.backupUpload.active }}
+          initContainers:
+          {{- else }}
+          containers:
+          {{- end }}
+            - args:
+            {{- if eq .Values.backupType "oneByOne" }}
+              - /app/pypg_backup_rotated.sh
+            {{- else }}
+              - /app/pg_backup_rotated.sh
+            {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "backup-zen.backupConfigName" . }}
+                - secretRef:
+                    name: {{ include "backup-zen.backupCredsSecretName" . }}
+              env:
+                - name: BACKUP_DIR
+                  value: {{ include "backup-zen.backupDirectory" . }}
+                - name: KUBERNETES_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              image: {{ include "backup-zen.cronjob.image" . }}
+              imagePullPolicy: {{ default "Always" .Values.cronjob.pullPolicy }}
+              imagePullSecrets: {{ default "[]" .Values.cronjob.imagePullSecrets }}
+              name: dumper
+              resources: {}
+              volumeMounts:
+                - mountPath: {{ include "backup-zen.backupDirectory" . }}
+                  name: backups
+                {{- if eq .Values.credentialType "oneByOne" }}
+                - mountPath: /app/creds.json
+                  subPath: creds.json
+                  name: credentials
+                  readOnly: true
+                {{ end -}}
+          {{- if .Values.backupUpload.active }}
+          containers:
+            - command:
+              - "bash"
+              - "-c"
+              args:  
+                - >
+                  {{ include "backup-zen.cronjob.uploader.arg" . }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "backup-zen.backupConfigName" . }}
+                - secretRef:
+                    name: {{ include "backup-zen.objectStorageSecretName" . }}
+              env:
+                - name: BACKUP_DIR
+                  value: {{ include "backup-zen.backupDirectory" . }}
+                - name: KUBERNETES_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              image: {{ include "backup-zen.uploaderImage" .}}
+              imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
+              name: uploader
+              resources: 
+              {{- with .Values.cronjob.resources.requests }}
+                requests:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
+              {{- with .Values.cronjob.resources.limits }}
+                limits:
+                  cpu: {{ .cpu | quote }}
+                  memory: {{ .memory }}
+              {{- end }}
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+          {{- end }}
+          restartPolicy: {{ .Values.cronjob.restartPolicy }}
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: {{ .Values.cronjob.storage.PVCName }}
+            - name: credentials
+              secret:
+                defaultMode: 0400
+                items:
+                  - key: creds.json
+                    path: creds.json
+                secretName: {{ include "backup-zen.backupCredsSecretName" . }}
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  schedule: {{ .Values.cronjob.schedule }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
