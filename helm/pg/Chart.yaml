@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart for dumping databases with K8s cronjobs and uploading to object storages 
+name: backup-zen
+version: 1.0.0

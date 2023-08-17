@@ -1,7 +1,0 @@
-{{- if .Values.global.createNamespace }}
-apiVersion: v1
-kind: Namespace
-metadata: 
-  name: {{ include "pg-backup.namespace" . }}
-  labels: {{ include "pg-backup.labels" . | nindent 4 }}
-{{ end -}}

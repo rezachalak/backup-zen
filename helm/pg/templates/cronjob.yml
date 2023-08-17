@@ -1,9 +1,8 @@
-{{- if eq .Values.backupType "oneByOne" }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "pg-backup.name" .}}-one-by-one
-  namespace: {{ include "pg-backup.namespace" . }}
+  name: {{ include "backup-zen.name" .}}
+  namespace: {{ include "backup-zen.namespace" . }}
 spec:
   jobTemplate:
     spec:
@@ -22,33 +21,30 @@ spec:
             {{- end }}
               envFrom:
                 - configMapRef:
-                    name: {{ include "pg-backup.name" . }}-db-data
+                    name: {{ include "backup-zen.backupConfigName" . }}
+                - secretRef:
+                    name: {{ include "backup-zen.backupCredsSecretName" . }}
               env:
                 - name: BACKUP_DIR
-                  value: /backups
-              image: {{ include "pg-backup.cronjob.image" . }}
-              imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
+                  value: {{ include "backup-zen.backupDirectory" . }}
+                - name: KUBERNETES_POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+              image: {{ include "backup-zen.cronjob.image" . }}
+              imagePullPolicy: {{ default "Always" .Values.cronjob.pullPolicy }}
+              imagePullSecrets: {{ default "[]" .Values.cronjob.imagePullSecrets }}
               name: dumper
-              resources: 
-              {{- with .Values.cronjob.resources.requests }}
-                requests:
-                  cpu: {{ .cpu | quote }}
-                  memory: {{ .memory }}
-              {{- end }}
-              {{- with .Values.cronjob.resources.limits }}
-                limits:
-                  cpu: {{ .cpu | quote }}
-                  memory: {{ .memory }}
-              {{- end }}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
+              resources: {}
               volumeMounts:
-                - mountPath: /backups
+                - mountPath: {{ include "backup-zen.backupDirectory" . }}
                   name: backups
+                {{- if eq .Values.credentialType "oneByOne" }}
                 - mountPath: /app/creds.json
                   subPath: creds.json
                   name: credentials
                   readOnly: true
+                {{ end -}}
           {{- if .Values.backupUpload.active }}
           containers:
             - command:
@@ -56,22 +52,20 @@ spec:
               - "-c"
               args:  
                 - >
-                  {{ include "pg-backup.cronjob.uploader.arg" . }}
+                  {{ include "backup-zen.cronjob.uploader.arg" . }}
               envFrom:
                 - configMapRef:
-                    name: {{ include "pg-backup.name" . }}-pg-backup-config
+                    name: {{ include "backup-zen.backupConfigName" . }}
                 - secretRef:
-                    name: {{ include "pg-backup.objectStorageName" . }}
+                    name: {{ include "backup-zen.objectStorageSecretName" . }}
               env:
+                - name: BACKUP_DIR
+                  value: {{ include "backup-zen.backupDirectory" . }}
                 - name: KUBERNETES_POD_NAME
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
-              {{- if eq .Values.backupUpload.ObjectStorageType "AWS_S3" }}
-              image: amazon/aws-cli:2.13.6
-              {{- else if .Values.backupUpload.ObjectStorageType "MinIO" }}
-              image: minio/mc
-              {{- end }}
+              image: {{ include "backup-zen.uploaderImage" .}}
               imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
               name: uploader
               resources: 
@@ -85,8 +79,6 @@ spec:
                   cpu: {{ .cpu | quote }}
                   memory: {{ .memory }}
               {{- end }}
-              terminationMessagePath: /dev/termination-log
-              terminationMessagePolicy: File
               volumeMounts:
                 - mountPath: /backups
                   name: backups
@@ -96,16 +88,15 @@ spec:
           volumes:
             - name: backups
               persistentVolumeClaim:
-                claimName: 	{{ .Values.cronjob.storage.PVCName }}
+                claimName: {{ .Values.cronjob.storage.PVCName }}
             - name: credentials
               secret:
                 defaultMode: 0400
                 items:
                   - key: creds.json
                     path: creds.json
-                secretName: {{ include "pg-backup.name" . }}-db-data
+                secretName: {{ include "backup-zen.backupCredsSecretName" . }}
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
   schedule: {{ .Values.cronjob.schedule }}
   successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
-{{ end -}}

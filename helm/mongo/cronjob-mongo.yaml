@@ -1,0 +1,200 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"batch/v1beta1","kind":"CronJob","metadata":{"annotations":{},"name":"backup-mongodb","namespace":"repository-mongodb"},"spec":{"jobTemplate":{"spec":{"template":{"spec":{"containers":[{"args":["/root/scripts/BackupAllDB.sh"],"env":[{"name":"AWS_DEFAULT_REGION","value":"eu-central-1"},{"name":"AWS_ACCESS_KEY_ID","valueFrom":{"secretKeyRef":{"key":"AWS_ACCESS_KEY_ID","name":"s3avidrepo-backups"}}},{"name":"AWS_SECRET_ACCESS_KEY","valueFrom":{"secretKeyRef":{"key":"AWS_SECRET_ACCESS_KEY","name":"s3avidrepo-backups"}}},{"name":"MONGODB_ROOT_PASSWORD","valueFrom":{"secretKeyRef":{"key":"mongodb-root-password","name":"repository-production-mongodb"}}}],"image":"avidcloud/toolbox:latest","name":"toolbox","resources":{},"volumeMounts":[{"mountPath":"/backups","name":"backups"},{"mountPath":"/root/scripts","name":"mongodb-backup","readOnly":true},{"mountPath":"/root/.kube","name":"kube"}]}],"restartPolicy":"OnFailure","volumes":[{"name":"backups","persistentVolumeClaim":{"claimName":"backups"}},{"configMap":{"defaultMode":493,"items":[{"key":"BackupAllDB.sh","path":"BackupAllDB.sh"}],"name":"mongodb-backup-script"},"name":"mongodb-backup"},{"name":"kube","secret":{"items":[{"key":"config","path":"config"},{"key":"repository-admin.crt","path":"repository-admin.crt"},{"key":"repository-admin.key","path":"repository-admin.key"}],"secretName":"kubeconfig"}}]}}}},"schedule":"30
+      1 * * *"}}
+  creationTimestamp: '2020-11-30T08:29:28Z'
+  managedFields:
+    - apiVersion: batch/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:spec:
+          f:concurrencyPolicy: {}
+          f:failedJobsHistoryLimit: {}
+          f:jobTemplate:
+            f:spec:
+              f:template:
+                f:spec:
+                  f:containers:
+                    k:{"name":"toolbox"}:
+                      .: {}
+                      f:args: {}
+                      f:env:
+                        .: {}
+                        k:{"name":"AWS_ACCESS_KEY_ID"}:
+                          .: {}
+                          f:name: {}
+                          f:valueFrom:
+                            .: {}
+                            f:secretKeyRef: {}
+                        k:{"name":"AWS_DEFAULT_REGION"}:
+                          .: {}
+                          f:name: {}
+                          f:value: {}
+                        k:{"name":"AWS_SECRET_ACCESS_KEY"}:
+                          .: {}
+                          f:name: {}
+                          f:valueFrom:
+                            .: {}
+                            f:secretKeyRef: {}
+                        k:{"name":"MONGODB_ROOT_PASSWORD"}:
+                          .: {}
+                          f:name: {}
+                          f:valueFrom:
+                            .: {}
+                            f:secretKeyRef: {}
+                      f:image: {}
+                      f:imagePullPolicy: {}
+                      f:name: {}
+                      f:resources: {}
+                      f:terminationMessagePath: {}
+                      f:terminationMessagePolicy: {}
+                      f:volumeMounts:
+                        .: {}
+                        k:{"mountPath":"/backups"}:
+                          .: {}
+                          f:mountPath: {}
+                          f:name: {}
+                        k:{"mountPath":"/root/.kube"}:
+                          .: {}
+                          f:mountPath: {}
+                          f:name: {}
+                        k:{"mountPath":"/root/scripts"}:
+                          .: {}
+                          f:mountPath: {}
+                          f:name: {}
+                          f:readOnly: {}
+                  f:dnsPolicy: {}
+                  f:restartPolicy: {}
+                  f:schedulerName: {}
+                  f:securityContext: {}
+                  f:terminationGracePeriodSeconds: {}
+                  f:volumes:
+                    .: {}
+                    k:{"name":"backups"}:
+                      .: {}
+                      f:name: {}
+                      f:persistentVolumeClaim:
+                        .: {}
+                        f:claimName: {}
+                    k:{"name":"kube"}:
+                      .: {}
+                      f:name: {}
+                      f:secret:
+                        .: {}
+                        f:defaultMode: {}
+                        f:items: {}
+                        f:secretName: {}
+                    k:{"name":"mongodb-backup"}:
+                      .: {}
+                      f:configMap:
+                        .: {}
+                        f:defaultMode: {}
+                        f:items: {}
+                        f:name: {}
+                      f:name: {}
+          f:schedule: {}
+          f:successfulJobsHistoryLimit: {}
+          f:suspend: {}
+      manager: kubectl-client-side-apply
+      operation: Update
+      time: '2020-11-30T08:29:28Z'
+    - apiVersion: batch/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          f:lastScheduleTime: {}
+          f:lastSuccessfulTime: {}
+      manager: kube-controller-manager
+      operation: Update
+      subresource: status
+      time: '2023-08-02T01:30:00Z'
+  name: backup-mongodb
+  namespace: repository-mongodb
+  resourceVersion: '1090211425'
+  uid: e96f9f3e-3f6a-4776-87c5-75902d15e345
+spec:
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+            - args:
+                - /root/scripts/BackupAllDB.sh
+              env:
+                - name: AWS_DEFAULT_REGION
+                  value: eu-central-1
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_ACCESS_KEY_ID
+                      name: s3avidrepo-backups
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_SECRET_ACCESS_KEY
+                      name: s3avidrepo-backups
+                - name: MONGODB_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: mongodb-root-password
+                      name: repository-production-mongodb
+              image: avidcloud/toolbox:latest
+              imagePullPolicy: Always
+              name: toolbox
+              resources: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+              volumeMounts:
+                - mountPath: /backups
+                  name: backups
+                - mountPath: /root/scripts
+                  name: mongodb-backup
+                  readOnly: true
+                - mountPath: /root/.kube
+                  name: kube
+          dnsPolicy: ClusterFirst
+          restartPolicy: OnFailure
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - name: backups
+              persistentVolumeClaim:
+                claimName: backups
+            - configMap:
+                defaultMode: 493
+                items:
+                  - key: BackupAllDB.sh
+                    path: BackupAllDB.sh
+                name: mongodb-backup-script
+              name: mongodb-backup
+            - name: kube
+              secret:
+                defaultMode: 420
+                items:
+                  - key: config
+                    path: config
+                  - key: repository-admin.crt
+                    path: repository-admin.crt
+                  - key: repository-admin.key
+                    path: repository-admin.key
+                secretName: kubeconfig
+  schedule: 30 1 * * *
+  successfulJobsHistoryLimit: 3
+  suspend: false
+status:
+  lastScheduleTime: '2023-08-02T01:30:00Z'
+  lastSuccessfulTime: '2023-08-02T01:36:13Z'
