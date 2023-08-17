@@ -26,23 +26,23 @@ jobs:
         name: Build and push PostgreSQL-Backup-Zen
         uses: docker/build-push-action@v4
         with:
-          context: ./docker/pg-backup-zen
-          file: ./docker/mongo-backup-zen/Dockerfile
+          context: ./docker/pg
+          file: ./docker/pg/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pg-backup-zen:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pg:latest
       -
         name: Build and push MongoDB-Backup-Zen
         uses: docker/build-push-action@v4
         with:
-          context: ./docker/mongo-backup-zen
-          file: ./docker/mongo-backup-zen/Dockerfile
+          context: ./docker/mongo
+          file: ./docker/mongo/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mysql-backup-zen:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mongo:latest
       -
-        name: Build and push MongoDB-Backup-Zen
+        name: Build and push MySQL-Backup-Zen
         uses: docker/build-push-action@v4
         with:
-          context: ./docker/mongo-backup-zen
-          file: ./docker/mongo-backup-zen/Dockerfile
+          context: ./docker/mysql
+          file: ./docker/mysql/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mongo-backup-zen:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mysql:latest
