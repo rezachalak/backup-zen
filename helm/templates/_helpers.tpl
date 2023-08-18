@@ -87,9 +87,9 @@ Create namespace name
 {{- end -}}
 
 {{/*
-Create image address
+Create Dumper image address
 */}}
-{{- define "backup-zen.cronjob.image" -}}
+{{- define "backup-zen.cronjob.dumper.image" -}}
     {{- if .Values.cronjob.image -}}
         {{- .Values.cronjob.image -}}
     {{- else if eq .Values.databaseType "PostgreSQL" -}}
@@ -101,6 +101,19 @@ Create image address
     {{- end -}}
 {{- end -}}
 
+
+{{/*
+Create Uploader image address
+*/}}
+{{- define "backup-zen.cronjob.uploader.image" -}}
+    {{- if .Values.cronjob.image -}}
+        {{- .Values.cronjob.image -}}
+    {{- else if eq .Values.backupUpload.objectStorageType "AWS_S3" -}}
+        amazon/aws-cli:2.13.6
+    {{- else if eq .Values.backupUpload.objectStorageType "MinIO" -}}
+        minio/mc:RELEASE.2023-08-01T23-30-57Z.hotfix.09b6cd70
+    {{- end -}}
+{{- end -}}
 
 {{/*
 Create cronjob arg
