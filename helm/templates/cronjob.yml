@@ -31,9 +31,8 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
-              image: {{ include "backup-zen.cronjob.image" . }}
+              image: {{ include "backup-zen.cronjob.dumper.image" . }}
               imagePullPolicy: {{ default "Always" .Values.cronjob.pullPolicy }}
-              imagePullSecrets: {{ default "[]" .Values.cronjob.imagePullSecrets }}
               name: dumper
               resources: {}
               volumeMounts:
@@ -65,7 +64,7 @@ spec:
                   valueFrom:
                     fieldRef:
                       fieldPath: metadata.name
-              image: {{ include "backup-zen.uploaderImage" .}}
+              image: {{ include "backup-zen.cronjob.uploader.image" .}}
               imagePullPolicy: {{ .Values.cronjob.pullPolicy }}
               name: uploader
               resources: 
@@ -83,6 +82,7 @@ spec:
                 - mountPath: /backups
                   name: backups
           {{- end }}
+          imagePullSecrets: {{ default "[]" .Values.cronjob.imagePullSecrets }}
           restartPolicy: {{ .Values.cronjob.restartPolicy }}
           terminationGracePeriodSeconds: 30
           volumes:
