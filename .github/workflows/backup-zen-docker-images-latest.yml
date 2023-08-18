@@ -1,4 +1,4 @@
-name: Backup-zen Docker Image CI
+name: Backup-zen Docker Image CI latest
 
 on:
   push:
