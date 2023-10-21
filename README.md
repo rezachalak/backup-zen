@@ -1,66 +1,42 @@
-# Backup Zen
-## Automated Database Backup Using Helm
-
-This repository contains backup scripts for MySQL, MongoDB, and PostgreSQL databases based on best practices. These scripts perform automated backups on a daily and monthly basis, rotating backups for a specified number of times.
+# Backup-Zen
+Backup-Zen is a Database Backup Solution Using Helm
 
 
-### Main features
+## Main features
+- Deploy on K8s using Helm
+- Specify the type of database: MySQL, PostgreSQL, and MongoDB
+- Set backup strategy: oneByOne or adminUser
+- Determine whether to deploy on Object Storage (S3 and MinIO are supported) or not 
+- Give Notifications on MSTeams for Fail/Success backup and upload
+- Retention period: days and weeks to keep, and specify the desired day of the week for performing backups
 
-- Helm: Quick, Reliable Deployment with Notifications on Success/Failure
-- Full or individual backups from MySQL, PostgreSQL, and MongoDB.
-- Skip specified databases in Full backup mode
-- Specify the weekly backup day from (Monday-Sunday) and number of days/weeks to keep backups
-- Sync dumped files with AWS S3/MinIO/Ceph object storage
-- Read secret variables from kubernetes secrets or direct put them in values.yaml
+## Getting Started
 
-### Getting Started
-
-#### Prerequisites
-
-##### Using Helm
+### Prerequisites
+- A kubernetes cluster
+- Read access to database
 - Helm and kubectl installed and configured
-  
 
-##### Using crontab
-Before using these scripts, you will need to have the following installed on your system:
+### Using Helm
 
-- MySQL client (for MySQL backups)
-- MongoDB client (for MongoDB backups)
-- PostgreSQL client (for PostgreSQL backups)
-- AWS client with configured profiles
-- AWS bucket as cloud storage
-- Kubectl with associated kubeconfigs
-- GNU tar
-- Cron
+[Helm](https://helm.sh) must be installed to use the charts.  Please refer to
+Helm's [documentation](https://helm.sh/docs) to get started.
 
-#### Installation
+Once Helm has been set up correctly, add the repo as follows:
 
-1. Clone this repository to your local machine:
+    helm repo add bzen https://backupzen.github.io/helm-charts
 
-```bash
-https://github.com/mrezachalak/db-backup
-```
+If you had already added this repo earlier, run `helm repo update` to retrieve
+the latest versions of the packages.  You can then run `helm search repo
+bzen` to see the charts.
 
-2. Configure the backup settings in the `config` files (e.g. [mysql_backup.config](https://github.com/mrezachalak/db-backup/blob/main/mysql_backup/mysql_backup.config))
+To install the backup-zen chart:
 
-3. Set the execution permission for the backup scripts:
+    helm install my-backup-zen bzen/backup-zen
 
-```bash
-find . -name "*.sh" -exec chmod +x {} \;
-```
+To uninstall the chart:
 
-4. Schedule the backups using Cron. For example, to backup MySQL databases, add the following line to your crontab:
-```bash
-0 2 * * * /path/to/db-backup/mysql_backup/main.sh
-0 3 * * * /path/to/db-backup/mongo_backup/main.sh
-0 4 * * * /path/to/db-backup/pg_backup/main.sh
-
-```
-
-### Note
-
-PostgreSQL backup scripts has been adapted with PostgresWiki
-https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux
+    helm delete my-backup-zen  
 
 ### Change Log
 
@@ -76,5 +52,7 @@ August 10th, 2023: Dockerfile of postgres backup-zen client added
 
 August 12th, 2023: Helm chart of postgres backup-zen added
 
+October 21th, 2023: First release of helm ( version 0.1.0 )
+
 ### Licence
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/mrezachalak/db-backup/blob/main/LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/rezachalak/db-backup/blob/main/LICENSE) file for details.
