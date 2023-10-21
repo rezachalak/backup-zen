@@ -1,7 +1,0 @@
-{{- if .Values.global.createNamespace }}
-apiVersion: v1
-kind: Namespace
-metadata: 
-  name: {{ include "backup-zen.namespace" . }}
-  labels: {{ include "backup-zen.labels" . | nindent 4 }}
-{{ end -}}

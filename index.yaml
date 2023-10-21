@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  backup-zen:
+  - apiVersion: v1
+    created: "2023-10-20T20:46:19.993579461+03:30"
+    description: A Helm chart for dumping databases with K8s cronjobs and uploading
+      to object storages
+    digest: 7702d99fc7df157c4ef80362d79db60c515c3a31b71939313552e412f2938737
+    name: backup-zen
+    urls:
+    - backup-zen-1.0.0.tgz
+    version: 1.0.0
+generated: "2023-10-20T20:46:19.993121788+03:30"
