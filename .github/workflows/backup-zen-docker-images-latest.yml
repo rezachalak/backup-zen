@@ -3,8 +3,10 @@ name: Backup-zen Docker Image CI latest
 on:
   push:
     branches: [ "main" ]
+    paths: [ "docker" ]
   pull_request:
     branches: [ "main" ]
+    paths: [ "docker" ]
 
 jobs:
   build:

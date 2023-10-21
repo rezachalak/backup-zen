@@ -31,7 +31,7 @@ global:
   failedTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
 
 cronjob:
-  image: mrezachalak/pg-backup-zen:12.1
+  # image: mrezachalak/pg-backup-zen:12.1
   pullPolicy: Always
   imagePullSecrets: []
   restartPolicy: Never
