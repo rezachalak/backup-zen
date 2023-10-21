@@ -66,7 +66,7 @@ function perform_backups()
 	        # connect to mysql using mysqldump for select mysql database
 	        # and pipe it out to gz file in backup dir :)
             mysqldump --no-tablespaces -u $USERNAME -h $DB_HOST --port=$DB_PORT -p$PASSWORD $db | gzip -9 > $FILE.in_progress
-	        if [ $? != 0 ]; then
+	        if [ ${PIPESTATUS[0]} != 0 ]; then
 	                echo "\n[ERROR] Failed to produce backup database $db" | tee -a logFile 1>&2
 					FAILED=true
 	        else

@@ -48,7 +48,8 @@ function perform_backups()
 		    echo "Globals backup" | tee -a $logFile
 
 		    set -o pipefail
-		    if ! pg_dumpall -g -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" | gzip > $FINAL_BACKUP_DIR"globals".sql.gz.in_progress; then
+		    pg_dumpall -g -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" | gzip > $FINAL_BACKUP_DIR"globals".sql.gz.in_progress
+	        if [ ${PIPESTATUS[0]} != 0 ]; then
 		            echo "[ERROR] Failed to produce globals backup" | tee -a $logFile 1>&2
 					FAILED=true
 		    else
@@ -82,7 +83,8 @@ function perform_backups()
 	do
 	        echo "Schema-only backup of $DATABASE" | tee -a $logFile
 		set -o pipefail
-	        if ! pg_dump -Fp -s -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz.in_progress; then
+	        pg_dump -Fp -s -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE"_SCHEMA.sql.gz.in_progress
+	        if [ ${PIPESTATUS[0]} != 0 ]; then
 	                echo "[ERROR] Failed to backup database schema of $DATABASE" | tee -a $logFile 1>&2
 					FAILED=true
 	        else
@@ -113,7 +115,8 @@ function perform_backups()
 			echo "\nPlain backup of $DATABASE" | tee -a $logFile
 			set -o pipefail
 			
-			if ! pg_dump -Fp -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress; then
+			pg_dump -Fp -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" | gzip > $FINAL_BACKUP_DIR"$DATABASE".sql.gz.in_progress
+	        if [ ${PIPESTATUS[0]} != 0 ]; then
 				echo "\n[ERROR] Failed to produce plain backup database $DATABASE" | tee -a $logFile 1&2
 				FAILED=true
 
@@ -129,7 +132,8 @@ function perform_backups()
 		then
 			echo "\nCustom backup of $DATABASE" | tee -a $logFile
 
-			if ! pg_dump -Fc -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress; then
+			pg_dump -Fc -h "$DB_HOST" -p "$DB_PORT" -U "$USERNAME" "$DATABASE" -f $FINAL_BACKUP_DIR"$DATABASE".custom.in_progress
+	        if [ ${PIPESTATUS[0]} != 0 ]; then
 				echo "\n[ERROR] Failed to produce custom backup database $DATABASE" | tee -a $logFile 1>&2
 				FAILED=true
 			else
