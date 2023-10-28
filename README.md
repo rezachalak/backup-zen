@@ -1,6 +1,14 @@
 # Backup-Zen
 Backup-Zen is a Database Backup Solution Using Helm
 
+[Github Repo](https://github.com/rezachalak/backup-zen)
+[Installation](https://github.com/rezachalak/backup-zen#using-helm)
+[Web Site](https://rezachalak.github.io/backup-zen/)
+[Documentation](https://artifacthub.io/packages/helm/bzen/backup-zen)
+<!-- [Mailing List]() -->
+[Bug Reports](https://github.com/rezachalak/backup-zen/issues)
+<!-- [Donate]() -->
+<!-- [Scripting API]() -->
 
 ## Main features
 - Deploy on K8s using Helm
@@ -40,13 +48,13 @@ To uninstall the chart:
 
 ### Change Log
 
-March 7th, 2023: [MongoDB backup](https://github.com/mrezachalak/db-backup/tree/main/mongo_backup) initial release
+March 7th, 2023: MongoDB backup eligibilty added
 
 April 23th, 2023: MongoDB some typo fixed and some improvements has made in variable naming
 
-April 23th, 2023:[MySQL backup](https://github.com/mrezachalak/db-backup/tree/main/mysql_backup) initial release
+April 23th, 2023:MySQL backup eligibilty added
 
-April 23th, 2023:[PostgreSQL backup](https://github.com/mrezachalak/db-backup/tree/main/pg_backup) initial release
+April 23th, 2023:PostgreSQL backup eligibilty added
 
 August 10th, 2023: Dockerfile of postgres backup-zen client added
 
