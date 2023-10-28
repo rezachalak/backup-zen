@@ -46,21 +46,69 @@ To uninstall the chart:
 
     helm delete my-backup-zen  
 
-### Change Log
 
-March 7th, 2023: MongoDB backup eligibilty added
+## Installation
+1. Add Backup-Zen chart repository.
+```
+helm repo add bzen https://rezachalak.github.io/backup-zen/
+```
 
-April 23th, 2023: MongoDB some typo fixed and some improvements has made in variable naming
+2. Update local Backup-Zen chart information from chart repository.
+```
+helm repo update
+```
 
-April 23th, 2023:MySQL backup eligibilty added
+3. Install Backup-Zen chart.
+- With Helm 2, the following command will create the `backup-zen` namespace and install the Backup-Zen chart together.
+```
+helm install bzen/backup-zen --name bzen --namespace backup-zen
+```
+- With Helm 3, the following commands will create the `backup-zen` namespace first, then install the Backup-Zen chart.
 
-April 23th, 2023:PostgreSQL backup eligibilty added
+```
+kubectl create namespace backup-zen
+helm install bzen bzen/backup-zen --namespace backup-zen
+```
 
-August 10th, 2023: Dockerfile of postgres backup-zen client added
+## Uninstallation
 
-August 12th, 2023: Helm chart of postgres backup-zen added
+With Helm 2 to uninstall Backup-Zen.
+```
+helm delete bzen --purge
+```
 
-October 21th, 2023: First release of helm ( version 0.1.0 )
+With Helm 3 to uninstall Backup-Zen.
+```
+helm uninstall bzen -n backup-zen
+kubectl delete namespace backup-zen
+```
 
-### Licence
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](https://github.com/rezachalak/db-backup/blob/main/LICENSE) file for details.
+## Values
+
+The `values.yaml` contains items used to tweak a deployment of this chart.
+
+### General Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| databaseType | string | `"MongoDB"` | Database Type |
+| hostname | string | `"mydb.rds.amazonaws.com"` | Database Host Address |
+|  | string | `""` |  |
+
+
+### Cronjob Scheduling Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+|  | string | `""` |  |
+|  | string | `""` |  |
+
+### Upload To objectStorage Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+|  | string | `""` |  |
+
+
+---
+Please see [link](https://github.com/rezachalak/backup-zen) for more information.
