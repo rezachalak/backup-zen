@@ -3,6 +3,17 @@ entries:
   backup-zen:
   - apiVersion: v1
     appVersion: 1.0.0
+    created: "2023-10-28T05:29:39.123604172Z"
+    description: BackupZen is a solution for backing up and uploading various database
+      types, leveraging the power of K8s cronjobs.
+    digest: 18c05385319b5d83cd00c873d083742bba5116ed46f8396a1d0b1f66a41279c9
+    kubeVersion: '>= 1.20.0'
+    name: backup-zen
+    urls:
+    - https://github.com/rezachalak/backup-zen/releases/download/backup-zen-0.1.2/backup-zen-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v1
+    appVersion: 1.0.0
     created: "2023-10-28T05:27:44.128672734Z"
     description: BackupZen is a solution for backing up and uploading various database
       types, leveraging the power of K8s cronjobs.
@@ -23,4 +34,4 @@ entries:
     urls:
     - https://github.com/rezachalak/backup-zen/releases/download/backup-zen-0.1.0/backup-zen-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-28T05:27:44.128680534Z"
+generated: "2023-10-28T05:29:39.123615273Z"
