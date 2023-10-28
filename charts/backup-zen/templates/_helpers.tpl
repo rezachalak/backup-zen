@@ -93,11 +93,11 @@ Create Dumper image address
     {{- if .Values.cronjob.image -}}
         {{- .Values.cronjob.image -}}
     {{- else if eq .Values.databaseType "PostgreSQL" -}}
-        backupzen/pg:{{ .Chart.AppVersion }}
+        rezachalak/bzen-pg:{{ .Chart.AppVersion }}
     {{- else if eq .Values.databaseType "MySQL" -}}
-        backupzen/mysql:{{ .Chart.AppVersion }}
+        rezachalak/bzen-mysql:{{ .Chart.AppVersion }}
     {{- else if eq .Values.databaseType "MongoDB" -}}
-        backupzen/mongo:{{ .Chart.AppVersion }}
+        rezachalak/bzen-mongo:{{ .Chart.AppVersion }}
     {{- end -}}
 {{- end -}}
 

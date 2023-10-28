@@ -28,7 +28,7 @@ jobs:
           context: ./docker/pg
           file: ./docker/pg/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pg:${{  github.ref_name }}
+          tags: rezachalak/bzen-pg:${{  github.ref_name }}
       -
         name: Build and push MongoDB-Backup-Zen
         uses: docker/build-push-action@v4
@@ -36,7 +36,7 @@ jobs:
           context: ./docker/mongo
           file: ./docker/mongo/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mongo:${{  github.ref_name }}
+          tags: rezachalak/bzen-mongo:${{  github.ref_name }}
       -
         name: Build and push MySQL-Backup-Zen
         uses: docker/build-push-action@v4
@@ -44,4 +44,4 @@ jobs:
           context: ./docker/mysql
           file: ./docker/mysql/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mysql:${{  github.ref_name }}
+          tags: rezachalak/bzen-mysql:${{  github.ref_name }}
