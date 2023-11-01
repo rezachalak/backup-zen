@@ -1,6 +1,6 @@
 apiVersion: v1
 description: BackupZen is a solution for backing up and uploading various database types, leveraging the power of K8s cronjobs. 
 name: backup-zen
-version: 0.1.3
+version: 0.1.4
 appVersion: 1.0.0
 kubeVersion: ">= 1.20.0"

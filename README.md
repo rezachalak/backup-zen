@@ -2,9 +2,13 @@
 Backup-Zen is a Database Backup Solution Using Helm
 
 [Github Repo](https://github.com/rezachalak/backup-zen)
+
 [Installation](https://github.com/rezachalak/backup-zen#using-helm)
+
 [Web Site](https://rezachalak.github.io/backup-zen/)
+
 [Documentation](https://artifacthub.io/packages/helm/bzen/backup-zen)
+
 <!-- [Mailing List]() -->
 [Bug Reports](https://github.com/rezachalak/backup-zen/issues)
 <!-- [Donate]() -->

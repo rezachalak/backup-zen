@@ -14,8 +14,7 @@ credentialType: oneByOne
 # credsSecretName: mycreds-secret
 
 global:
-  charset: 
-  namespace: db-backups
+  namespace: maintenance
   createNamespace: true
   rotation: true
   #### SETTINGS FOR ROTATED BACKUPS ####
@@ -26,8 +25,8 @@ global:
     daysToKeep: 7
   # How many weeks to keep weekly backups
     weeksToKeep: 5
-  teamsNotification: true
-  succeededTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
+  teamsNotification: false
+  succeededTeamsURL: https://myorg.webhook.office.com/webhookb1/blob-blob-blob
   failedTeamsURL: https://myorg.webhook.office.com/webhookb2/blob-blob-blob
 
 cronjob:
@@ -75,25 +74,21 @@ oneByOne:
     - database_name: db1
       username: user1
       password: password1
-    - database_name: db2
-      username: user2
-      password: password2
 
 ##### SETTINGS FOR AWS S3 ####
 backupUpload:
-  active: true
+  active: false
 # Supported objectStorages are: MinIO and AWS_S3
-  objectStorageType: MinIO
+  objectStorageType: AWS_S3
   # objectStorageSecretName is the name of the secret where the credentials of object storage is stored.
   # objectStorageSecretName: s3-secret-name
   AWS_S3:
     AWS_ACCESS_KEY_ID: "access"
     AWS_DEFAULT_REGION: "us-west-1"
     AWS_SECRET_ACCESS_KEY: "secret"
-    BUCKET_NAME: "mybucket-backup-zen"
+    BUCKET_NAME: "backupzen-s3"
   MINIO:
     MINIO_ACCESS_KEY_ID: access-key
-    MINIO_URL: https://localhost
+    MINIO_URL: http://localhost:9000
     MINIO_SECRET_ACCESS_KEY: secret
     BUCKET_NAME: backupzen-minio
-    OBJECT_NAME: c342jhc34gf

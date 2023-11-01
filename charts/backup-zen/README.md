@@ -2,9 +2,13 @@
 Backup-Zen is a Database Backup Solution Using Helm
 
 [Github Repo](https://github.com/rezachalak/backup-zen)
+
 [Installation](https://github.com/rezachalak/backup-zen#using-helm)
+
 [Web Site](https://rezachalak.github.io/backup-zen/)
+
 [Documentation](https://artifacthub.io/packages/helm/bzen/backup-zen)
+
 <!-- [Mailing List]() -->
 [Bug Reports](https://github.com/rezachalak/backup-zen/issues)
 <!-- [Donate]() -->
@@ -88,26 +92,101 @@ kubectl delete namespace backup-zen
 The `values.yaml` contains items used to tweak a deployment of this chart.
 
 ### General Settings
+#### Backup Type
+Select one of these two types:
+
+`oneByOne`: preparing databaseName, username and password for each database as an array in oneByOne.creds must be provided: 
+
+ credsSecretName is the name of the secret where the database credentials are stored (can be used instead of oneByOne.creds)
+
+`credsSecretName: mycreds-secret`
+
+ This secret must contain: `creds.json`
+```
+ creds.json: 
+[
+    {
+    "database_name": "",
+    "username": "",
+    "password": "" 
+    }
+    ,...
+]
+```
+Or in `values.yaml`:
+```
+  creds:
+    - database_name: db1
+      username: user1
+      password: password1
+    - database_name: db2
+      username: user2
+      password: password2
+```
+
+`adminUser`: admin user credentials in `adminUser.username` and `adminUser.password` must be provided
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| databaseType | string | `"MongoDB"` | Database Type |
+| databaseType | string | `"MongoDB"` | Available db Types: PostgreSQL, MySQL & MongoDB|
 | hostname | string | `"mydb.rds.amazonaws.com"` | Database Host Address |
-|  | string | `""` |  |
+| port | string | `"54325"` | Database Port |
+| credentialType | string | `"oneByOne"` | Select one of these two types: oneByOne OR adminUser |
+| global.namespace | string | `"maintenance"` |  |
+| global.createNamespace | string | `"true"` |  |
+| global.rotation | string | `"true"` |  |
+| global.rotation_config.dayOfWeekToKeep | string | `"5"` | Which day to take the weekly backup from (1-7 = Monday-Sunday) |
+| global.rotation_config.daysToKeep | string | `"7"` | Number of days to keep daily backups |
+| global.rotation_config.weeksToKeep | string | `"5"` | How many weeks to keep weekly backups |
+| global.teamsNotification | string | `"false"` |  |
+| global.succeededTeamsURL | string | `"https://myorg.webhook.office.com/webhookb1/blob-blob-blob"` |  |
+| global.failedTeamsURL | string | `"https://myorg.webhook.office.com/webhookb2/blob-blob-blob"` |  |
 
+### Credentials Settings
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| adminUser.username | string | `""` |  |
+| adminUser.password | string | `""` |  |
+| oneByOne.credsSecretName | string | `""` | the secret where the database credentials are stored (can be used instead of oneByOne.creds |
+| oneByOne.creds | list(map) | `[{"database_name": "db1", "username": "u1", "password": "p1"}]`|  |
 
 ### Cronjob Scheduling Settings
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-|  | string | `""` |  |
-|  | string | `""` |  |
+| cronjob.pullPolicy | string | `"Always"` |  |
+| cronjob.imagePullSecrets | list(string) | `"[]"` |  |
+| cronjob.restartPolicy | string | `"Never"` |  |
+| cronjob.resources.requests.cpu | string | `"1"` |  |
+| cronjob.resources.requests.memory | string | `"1Gi"` |  |
+| cronjob.resources.limits.cpu | string | `"2"` |  |
+| cronjob.resources.limits.memory | string | `"2Gi"` |  |
+| cronjob.schedule | string | `"0 0 * * *"` |  |
+| cronjob.failedJobsHistoryLimit | string | `""` |  |
+| cronjob.successfulJobsHistoryLimit | string | `""` |  |
+| cronjob.storage.createPVC | string | `""` |  |
+| cronjob.storage.PVCName | string | `""` |  |
+| cronjob.storage.storageClass | string | `""` |  |
+| cronjob.storage.accessMode | string | `""` |  |
+| cronjob.storage.PVCSize | string | `""` |  |
 
 ### Upload To objectStorage Settings
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-|  | string | `""` |  |
+| backupUpload.active | string | `"false"` |  |
+| backupUpload.objectStorageType | string | `"AWS_S3"` | Supported objectStorages are: MinIO and AWS_S3 |
+| backupUpload.objectStorageSecretName | string | `""` | the name of the secret where the credentials of object storage is stored. |
+| backupUpload.AWS_S3.AWS_ACCESS_KEY_ID | string | `""` |  |
+| backupUpload.AWS_S3.AWS_DEFAULT_REGION | string | `"us-west-1"` |  |
+| backupUpload.AWS_S3.AWS_SECRET_ACCESS_KEY | string | `""` |  |
+| backupUpload.AWS_S3.BUCKET_NAME | string | `"backupzen-s3"` |  |
+| backupUpload.MINIO.MINIO_ACCESS_KEY_ID | string | `""` |  |
+| backupUpload.MINIO.MINIO_URL | string | `"http://localhost:9000"` |  |
+| backupUpload.MINIO.MINIO_SECRET_ACCESS_KEY | string | `""` |  |
+| backupUpload.MINIO.BUCKET_NAME | string | `""` |  |
+| backupUpload.MINIO.O | string | `"backupzen-minio"` |  |
 
 
 ---
