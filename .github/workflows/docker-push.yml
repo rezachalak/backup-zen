@@ -19,6 +19,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-pg
+        context: ./docker/pg
         tags: latest ${{ github.sha }} ${{ github.event.release.tag_name }}
         dockerfiles: |
           ./docker/pg/Dockerfile
@@ -28,6 +29,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-mongo
+        context: ./docker/mongo
         tags: latest ${{ github.sha }} ${{ github.event.release.tag_name }}
         dockerfiles: |
           ./docker/mongo/Dockerfile
@@ -37,6 +39,7 @@ jobs:
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-mysql
+        context: ./docker/mysql
         tags: latest ${{ github.sha }} ${{ github.event.release.tag_name }}
         dockerfiles: |
           ./docker/mysql/Dockerfile
