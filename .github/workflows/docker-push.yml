@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build Image of PostgreSQL-Backup-Zen
-      id: build-image
+      id: build-image-pg
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-pg
@@ -24,7 +24,7 @@ jobs:
           ./docker/pg/Dockerfile
 
     - name: Build Image of MongoDB-Backup-Zen
-      id: build-image
+      id: build-image-mongo
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-mongo
@@ -33,7 +33,7 @@ jobs:
           ./docker/mongo/Dockerfile
 
     - name: Build Image of MySQL-Backup-Zen
-      id: build-image
+      id: build-image-mysql
       uses: redhat-actions/buildah-build@v2
       with:
         image: rezachalak/bzen-mysql
@@ -44,14 +44,35 @@ jobs:
     # Podman Login action (https://github.com/redhat-actions/podman-login) also be used to log in,
     # in which case 'username' and 'password' can be omitted.
     - name: Push To dhub
-      id: push-to-dhub
+      id: push-to-dhub-pg
       uses: redhat-actions/push-to-registry@v2
       with:
-        image: ${{ steps.build-image.outputs.image }}
-        tags: ${{ steps.build-image.outputs.tags }}
+        image: ${{ steps.build-image-pg.outputs.image }}
+        tags: ${{ steps.build-image-pg.outputs.tags }}
         registry: docker.io
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+    - name: Push To dhub
+      id: push-to-dhub-mongo
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image-mongo.outputs.image }}
+        tags: ${{ steps.build-image-mongo.outputs.tags }}
+        registry: docker.io
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Push To dhub
+      id: push-to-dhub-mysql
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image-mysql.outputs.image }}
+        tags: ${{ steps.build-image-mysql.outputs.tags }}
+        registry: docker.io
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
     - name: Print image url
-      run: echo "Image pushed to ${{ steps.push-to-dhub.outputs.registry-paths }}"
+      run: echo "Images pushed to ${{ steps.push-to-dhub-pg.outputs.registry-paths }} /n/n/n ${{ steps.push-to-dhub-mongo.outputs.registry-paths }} /n/n/n ${{ steps.push-to-dhub-mysql.outputs.registry-paths }}"
