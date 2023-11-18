@@ -1,7 +1,10 @@
 name: Build and Push Image
 on:
-  release:
-    types: [released]
+  push:
+    paths:
+      - './docker/**'
+  # release:
+  #   types: [released]
 
 jobs:
   build:
