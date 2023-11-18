@@ -4,6 +4,7 @@ if [ -z "$1" ];then
 else
     VERSION="$1"
 fi
+
 SCRIPTPATH=$(cd ${0%/*} && pwd -P)
 
 cd $SCRIPTPATH/mongo/
