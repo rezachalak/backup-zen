@@ -1,3 +1,6 @@
+[![Release Charts](https://github.com/rezachalak/backup-zen/actions/workflows/release-helm.yml/badge.svg)](https://github.com/rezachalak/backup-zen/actions/workflows/release-helm.yml)
+
+
 # Backup-Zen
 Backup-Zen is a Database Backup Solution Using Helm
 

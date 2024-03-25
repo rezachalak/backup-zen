@@ -1,16 +1,40 @@
-# Backup-Zen
+# Backup Zen - Database Recovery Solution
+
+![backup-zen - Database Recovey Solution](https://github.com/rezachalak/backup-zen/raw/master/logo.png)
+<!-- 
+<a href='https://ko-fi.com/rezachalak' target='_blank'><img height='26' style='border:0px;height:26px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/backup-zen/backup-zen?color=009dc7&label=latest%20release&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/releases)
+[![GitHub issues](https://img.shields.io/github/issues-raw/rezachalak/backup-zen?color=009dc7&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/issues?q=is%3Aopen+is%3Aissue)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/backup-zen/backup-zen?color=009dc7&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr-raw/backup-zen/backup-zen?color=009dc7&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/pulls?q=is%3Aopen+is%3Apr)
+[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/backup-zen/backup-zen?color=009dc7&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/pulls?q=is%3Apr+is%3Aclosed)
+
+[![Docker Stars](https://img.shields.io/docker/stars/rezachalak/backup-zen?color=009dc7&logo=docker&logoColor=%23403d3d&style=for-the-badge)](https://hub.docker.com/r/rezachalak/backup-zen)
+[![Docker Pulls](https://img.shields.io/docker/pulls/rezachalak/backup-zen?color=009dc7&logo=docker&logoColor=%23403d3d&style=for-the-badge)](https://hub.docker.com/r/rezachalak/backup-zen)
+[![Docker Image Size (tag)](https://img.shields.io/docker/image-size/rezachalak/backup-zen/latest?color=009dc7&label=docker%20image%20size&logo=docker&logoColor=%23403d3d&style=for-the-badge)](https://hub.docker.com/r/rezachalak/backup-zen)
+ -->
+
+
+<!-- 
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/backup-zen/backup-zen/Python%20Lint%20&%20Run%20Unit%20Tests/master?label=Unit%20Tests&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/actions?query=workflow%3A%22Python+Lint+%26+Run+Unit+Tests%22+branch%3Amaster)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/backup-zen/backup-zen/Build%20All%20Packages%20CI/master?label=Package%20Build&logo=github&logoColor=%23403d3d&style=flat-square)](https://github.com/rezachalak/backup-zen/actions?query=workflow%3A%22Build+All+Packages+CI%22+branch%3Amaster)
+
+[![GitHub license](https://img.shields.io/github/license/backup-zen/backup-zen?color=009dc7&style=flat-square)]()
+---
 Backup-Zen is a Database Backup Solution Using Helm
+
 
 [Github Repo](https://github.com/rezachalak/backup-zen)
 
-[Installation](https://github.com/rezachalak/backup-zen#using-helm)
+[Installation Guide](https://github.com/rezachalak/backup-zen#using-helm)
 
-[Web Site](https://rezachalak.github.io/backup-zen/)
+[Main Page](https://rezachalak.github.io/backup-zen/)
 
 [Documentation](https://artifacthub.io/packages/helm/bzen/backup-zen)
 
 <!-- [Mailing List]() -->
-[Bug Reports](https://github.com/rezachalak/backup-zen/issues)
+<!-- [Bug Reports](https://github.com/rezachalak/backup-zen/issues) -->
 <!-- [Donate]() -->
 <!-- [Scripting API]() -->
 
